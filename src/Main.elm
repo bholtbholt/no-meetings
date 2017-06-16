@@ -3,7 +3,7 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Events exposing (..)
 import List exposing (..)
-import Maybe exposing (..)
+import Questions exposing (Question, QuestionId, initQuestions)
 
 
 --import Html.Attributes exposing (..)
@@ -30,24 +30,9 @@ type alias Model =
     }
 
 
-type alias QuestionId =
-    Int
-
-
-type alias Question =
-    { question : String
-    , id : QuestionId
-    }
-
-
 init : ( Model, Cmd.Cmd Msg )
 init =
-    ( { questions =
-            [ { question = "Question Zero", id = 0 }
-            , { question = "Question One", id = 1 }
-            , { question = "Question Two", id = 2 }
-            , { question = "Question Three", id = 3 }
-            ]
+    ( { questions = initQuestions
       , currentQuestion = 0
       }
     , Cmd.none
