@@ -3,22 +3,8 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Events exposing (..)
 import List exposing (..)
-import Questions exposing (Question, QuestionId, initQuestions, view)
-
-
---import Html.Attributes exposing (..)
--- Program
-
-
-main : Program Never Model Msg
-main =
-    Html.program
-        { view = view
-        , update = update
-        , init = init
-        , subscriptions = always Sub.none
-        }
-
+import Questions exposing (initQuestions, view)
+import Types exposing (..)
 
 
 -- Model
@@ -39,19 +25,28 @@ init =
     )
 
 
+main : Program Never Model Msg
+main =
+    Html.program
+        { view = view
+        , update = update
+        , init = init
+        , subscriptions = always Sub.none
+        }
+
+
 
 --- Update
-
-
-type Msg
-    = ChangeQuestion Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ChangeQuestion value ->
-            ( { model | currentQuestion = model.currentQuestion + value }, Cmd.none )
+        SetCurrentQuestion questionId ->
+            ( { model | currentQuestion = questionId }, Cmd.none )
+
+        ResetQuestions ->
+            init
 
 
 
@@ -67,15 +62,14 @@ view model =
 
         showQuestion maybeQuestion =
             case maybeQuestion of
-                Just value ->
-                    Questions.view value
+                Just question ->
+                    Questions.view question
 
                 Nothing ->
-                    text "default"
+                    text "There was an error"
     in
     div []
         [ div [] [ showQuestion getQuestion ]
-        , button [ onClick (ChangeQuestion -1) ] [ text "decrement" ]
-        , button [ onClick (ChangeQuestion 1) ] [ text "increment" ]
+        , button [ onClick ResetQuestions ] [ text "Reset" ]
         , div [] [ text (toString model) ]
         ]

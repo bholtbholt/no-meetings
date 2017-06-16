@@ -1,121 +1,139 @@
-module Questions exposing (Question, QuestionId, initQuestions, view)
+module Questions exposing (initQuestions, view)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Types exposing (..)
 
 
--- Types
+startId : QuestionId
+startId =
+    0
 
 
-type alias QuestionId =
-    Int
+failureId : QuestionId
+failureId =
+    -1
 
 
-type alias Question =
-    { question : String
-    , id : QuestionId
-    , proceed : QuestionId
-    , response : String
-    , proceedLabel : String
-    , responseLabel : String
-    }
+finishId : QuestionId
+finishId =
+    99
 
 
 initQuestions : List Question
 initQuestions =
-    [ { id = 0
+    [ { id = startId
       , question = "Should this be a meeting?"
-      , proceed = 1
-      , proceedLabel = "Yes"
-      , responseLabel = "No"
-      , response = "What are you doing here? Get back to work!"
+      , proceedPath = 1
+      , proceedLabel = "Start"
+      , responsePath = startId
+      , responseLabel = ""
+      , responseText = ""
+      }
+    , { id = failureId
+      , question = "Failure"
+      , proceedPath = startId
+      , proceedLabel = "Restart"
+      , responsePath = failureId
+      , responseLabel = ""
+      , responseText = ""
+      }
+    , { id = finishId
+      , question = "Let’s Have A Meeting!"
+      , proceedPath = startId
+      , proceedLabel = "Restart"
+      , responsePath = finishId
+      , responseLabel = ""
+      , responseText = "Remember to: Share the agenda and goals of the meeting with your attendees. Add a Zoom link to the meeting in Google calendar. Book meeting rooms for all locations involved. Show up on time and ready. To step up your meeting game, consult this post about Running Better Meetings."
       }
     , { id = 1
       , question = "Is this an important topic?"
-      , proceed = 2
+      , proceedPath = 2
       , proceedLabel = "Yes"
+      , responsePath = failureId
       , responseLabel = "No"
-      , response = "Don’t meet. If this item isn’t business critical, consider dealing with this topic another way."
+      , responseText = "Don’t meet. If this item isn’t business critical, consider dealing with this topic another way."
       }
     , { id = 2
       , question = "Can it be solved by collaborating without meeting?"
-      , proceed = 3
+      , proceedPath = 3
       , proceedLabel = "No"
+      , responsePath = failureId
       , responseLabel = "Yes"
-      , response = "Use other collaboration options. Collaborate on a task using your PM tool, or run a survey, or do a quick group chat on Slack."
+      , responseText = "Use other collaboration options. Collaborate on a task using your PM tool, or run a survey, or do a quick group chat on Slack."
       }
     , { id = 3
       , question = "Does it require everyone to participate?"
-      , proceed = 4
+      , proceedPath = 4
       , proceedLabel = "Yes"
+      , responsePath = failureId
       , responseLabel = "No"
-      , response = "Limit attendees. Limit the meeting to essential participants only. When done, go to 4."
+      , responseText = "Limit attendees. Limit the meeting to essential participants only. When done, go to 4."
       }
     , { id = 4
       , question = "Does the group have authority to act?"
-      , proceed = 5
+      , proceedPath = 5
       , proceedLabel = "Yes"
+      , responsePath = 6
       , responseLabel = "No"
-      , response = "Go to 6"
+      , responseText = ""
       }
     , { id = 5
       , question = "Can the key participants and decision-makers attend?"
-      , proceed = 7
+      , proceedPath = 7
       , proceedLabel = "Yes"
+      , responsePath = 6
       , responseLabel = "No"
-      , response = "Go to 6"
+      , responseText = ""
       }
     , { id = 6
       , question = "Is there still value? Can the group still add significant value by meeting?"
-      , proceed = 7
+      , proceedPath = 7
       , proceedLabel = "Yes"
+      , responsePath = failureId
       , responseLabel = "No"
-      , response = "Stop here and don’t meet. Reevaluate if it is possible to use other collaboration options."
+      , responseText = "Stop here and don’t meet. Reevaluate if it is possible to use other collaboration options."
       }
     , { id = 7
       , question = "Is there pre-work requested of key participants?"
-      , proceed = 8
+      , proceedPath = 8
       , proceedLabel = "Yes"
+      , responsePath = failureId
       , responseLabel = "No"
-      , response = "Add pre-work. Do as much possible before the meeting to cut down on meeting time. When done, go to 8."
+      , responseText = "Add pre-work. Do as much possible before the meeting to cut down on meeting time. When done, go to 8."
       }
     , { id = 8
       , question = "Is there an agenda with clear goals?"
-      , proceed = 9
+      , proceedPath = 9
       , proceedLabel = "Yes"
+      , responsePath = failureId
       , responseLabel = "No"
-      , response = "Add agenda and goals. Define clear outcomes and a process to get them. When done, go to 9."
+      , responseText = "Add agenda and goals. Define clear outcomes and a process to get them. When done, go to 9."
       }
     , { id = 9
       , question = "Is there enough time to get to the desired outcome?"
-      , proceed = 10
+      , proceedPath = 10
       , proceedLabel = "Yes"
+      , responsePath = failureId
       , responseLabel = "No"
-      , response = "Alter goals or reschedule. Make sure meaningful goals can be achieved within your time frame. If altering is impossible, reschedule your meeting to allow a long enough meeting to achieve goals. When done, go to 10."
+      , responseText = "Alter goals or reschedule. Make sure meaningful goals can be achieved within your time frame. If altering is impossible, reschedule your meeting to allow a long enough meeting to achieve goals. When done, go to 10."
       }
     , { id = 10
       , question = "Is there a strong meeting facilitator?"
-      , proceed = 11
+      , proceedPath = finishId
       , proceedLabel = "Yes"
+      , responsePath = failureId
       , responseLabel = "No"
-      , response = "Find a “driver”. You need someone who can drive the meeting by keeping track of time, the agenda and keeping the group focused on the goals. When done, go to 11."
-      }
-    , { id = 11
-      , question = "Let’s Have A Meeting!"
-      , proceed = 0
-      , proceedLabel = "Yes"
-      , responseLabel = "No"
-      , response = "Remember to: Share the agenda and goals of the meeting with your attendees. Add a Zoom link to the meeting in Google calendar. Book meeting rooms for all locations involved. Show up on time and ready. To step up your meeting game, consult this post about Running Better Meetings."
+      , responseText = "Find a “driver”. You need someone who can drive the meeting by keeping track of time, the agenda and keeping the group focused on the goals. When done, go to 11."
       }
     ]
 
 
-view : Question -> Html msg
+view : Question -> Html Msg
 view question =
     div [ id (toString question.id) ]
         [ h1 [] [ text question.question ]
-        , p [] [ text question.response ]
-        , button [] [ text question.responseLabel ]
-        , button [] [ text question.proceedLabel ]
+        , button [ onClick (SetCurrentQuestion question.responsePath) ] [ text question.responseLabel ]
+        , button [ onClick (SetCurrentQuestion question.proceedPath) ] [ text question.proceedLabel ]
         ]
