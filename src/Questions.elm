@@ -1,4 +1,4 @@
-module Questions exposing (initQuestions, view)
+module Questions exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -130,10 +130,43 @@ initQuestions =
     ]
 
 
-view : Question -> Html Msg
-view question =
+anyQuestion : Question -> Html Msg
+anyQuestion question =
     div [ id (toString question.id) ]
         [ h1 [] [ text question.question ]
         , button [ onClick (SetCurrentQuestion question.responsePath) ] [ text question.responseLabel ]
         , button [ onClick (SetCurrentQuestion question.proceedPath) ] [ text question.proceedLabel ]
         ]
+
+
+startQuestion : Question -> Html Msg
+startQuestion question =
+    div [ id (toString question.id) ]
+        [ h1 [] [ text question.question ]
+        , button [ onClick (SetCurrentQuestion question.proceedPath) ] [ text question.proceedLabel ]
+        ]
+
+
+finishQuestion : Question -> Html Msg
+finishQuestion question =
+    div [ id (toString question.id) ]
+        [ h1 [] [ text question.question ]
+        , button [ onClick ResetQuestions ] [ text question.proceedLabel ]
+        ]
+
+
+failureQuestion : Question -> Html Msg
+failureQuestion question =
+    div [ id (toString question.id) ]
+        [ h1 [] [ text question.question ]
+        , button [ onClick ResetQuestions ] [ text question.proceedLabel ]
+        ]
+
+
+
+-- depending on currentQuestion, render the correct question view. On Failure render Failure, etc.
+
+
+view : Question -> Html Msg
+view question =
+    anyQuestion question
