@@ -3,7 +3,7 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Events exposing (..)
 import List exposing (..)
-import Questions exposing (Question, QuestionId, initQuestions)
+import Questions exposing (Question, QuestionId, initQuestions, view)
 
 
 --import Html.Attributes exposing (..)
@@ -68,7 +68,7 @@ view model =
         showQuestion maybeQuestion =
             case maybeQuestion of
                 Just value ->
-                    text value.question
+                    Questions.view value
 
                 Nothing ->
                     text "default"

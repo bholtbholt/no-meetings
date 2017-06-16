@@ -1,4 +1,9 @@
-module Questions exposing (..)
+module Questions exposing (Question, QuestionId, initQuestions, view)
+
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
+
 
 -- Types
 
@@ -104,3 +109,13 @@ initQuestions =
       , response = "Remember to: Share the agenda and goals of the meeting with your attendees. Add a Zoom link to the meeting in Google calendar. Book meeting rooms for all locations involved. Show up on time and ready. To step up your meeting game, consult this post about Running Better Meetings."
       }
     ]
+
+
+view : Question -> Html msg
+view question =
+    div [ id (toString question.id) ]
+        [ h1 [] [ text question.question ]
+        , p [] [ text question.response ]
+        , button [] [ text question.responseLabel ]
+        , button [] [ text question.proceedLabel ]
+        ]
