@@ -111,7 +111,7 @@ view model =
             div [ class "progress-bar" ]
                 [ div [ style [ ( "width", calculateProgress ) ], class "progress-indication" ] [] ]
     in
-    div []
+    div [ class "full-height" ]
         [ renderProgressBar
         , renderQuestion
         ]
