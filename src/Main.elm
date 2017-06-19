@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Html exposing (..)
+import Html.Attributes exposing (..)
 import List exposing (..)
 import Questions
     exposing
@@ -96,5 +97,21 @@ view model =
                 finishQuestion (getCurrentQuestion model)
             else
                 anyQuestion (getCurrentQuestion model)
+
+        totalQuestions =
+            toFloat <| List.length model.questions - 2
+
+        currentQuestionToFloat =
+            toFloat <| clamp 0 (List.length model.questions) model.currentQuestion
+
+        calculateProgress =
+            toString (currentQuestionToFloat / totalQuestions * 100) ++ "%"
+
+        renderProgressBar =
+            div [ class "progress-bar" ]
+                [ div [ style [ ( "width", calculateProgress ) ], class "progress-indication" ] [] ]
     in
-    renderQuestion
+    div []
+        [ renderProgressBar
+        , renderQuestion
+        ]
