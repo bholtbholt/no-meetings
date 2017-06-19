@@ -1,4 +1,15 @@
-module Questions exposing (..)
+module Questions
+    exposing
+        ( anyQuestion
+        , defaultQuestion
+        , failureId
+        , failureQuestion
+        , finishId
+        , finishQuestion
+        , initQuestions
+        , startId
+        , startQuestion
+        )
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -19,6 +30,18 @@ failureId =
 finishId : QuestionId
 finishId =
     99
+
+
+defaultQuestion : Question
+defaultQuestion =
+    { id = startId
+    , question = "There was an error loading the question."
+    , proceedPath = startId
+    , proceedLabel = "Restart"
+    , responsePath = startId
+    , responseLabel = ""
+    , responseText = ""
+    }
 
 
 initQuestions : List Question
@@ -151,22 +174,15 @@ finishQuestion : Question -> Html Msg
 finishQuestion question =
     div [ id (toString question.id) ]
         [ h1 [] [ text question.question ]
+        , p [] [ text question.responseText ]
         , button [ onClick ResetQuestions ] [ text question.proceedLabel ]
         ]
 
 
-failureQuestion : Question -> Html Msg
-failureQuestion question =
+failureQuestion : Question -> Question -> Html Msg
+failureQuestion question lastQuestion =
     div [ id (toString question.id) ]
-        [ h1 [] [ text question.question ]
+        [ h1 [] [ text lastQuestion.question ]
+        , p [] [ text lastQuestion.responseText ]
         , button [ onClick ResetQuestions ] [ text question.proceedLabel ]
         ]
-
-
-
--- depending on currentQuestion, render the correct question view. On Failure render Failure, etc.
-
-
-view : Question -> Html Msg
-view question =
-    anyQuestion question

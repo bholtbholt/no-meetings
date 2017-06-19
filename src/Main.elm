@@ -1,9 +1,19 @@
 module Main exposing (..)
 
 import Html exposing (..)
-import Html.Events exposing (..)
 import List exposing (..)
-import Questions exposing (initQuestions, view)
+import Questions
+    exposing
+        ( anyQuestion
+        , defaultQuestion
+        , failureId
+        , failureQuestion
+        , finishId
+        , finishQuestion
+        , initQuestions
+        , startId
+        , startQuestion
+        )
 import Types exposing (..)
 
 
@@ -13,13 +23,15 @@ import Types exposing (..)
 type alias Model =
     { questions : List Question
     , currentQuestion : QuestionId
+    , lastQuestion : QuestionId
     }
 
 
 init : ( Model, Cmd.Cmd Msg )
 init =
     ( { questions = initQuestions
-      , currentQuestion = 0
+      , currentQuestion = startId
+      , lastQuestion = startId
       }
     , Cmd.none
     )
@@ -43,7 +55,12 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         SetCurrentQuestion questionId ->
-            ( { model | currentQuestion = questionId }, Cmd.none )
+            ( { model
+                | currentQuestion = questionId
+                , lastQuestion = model.currentQuestion
+              }
+            , Cmd.none
+            )
 
         ResetQuestions ->
             init
@@ -53,23 +70,31 @@ update msg model =
 -- View
 
 
+getCurrentQuestion : Model -> Question
+getCurrentQuestion model =
+    List.filter (\q -> q.id == model.currentQuestion) model.questions
+        |> List.head
+        |> Maybe.withDefault defaultQuestion
+
+
+getLastQuestion : Model -> Question
+getLastQuestion model =
+    List.filter (\q -> q.id == model.lastQuestion) model.questions
+        |> List.head
+        |> Maybe.withDefault defaultQuestion
+
+
 view : Model -> Html Msg
 view model =
     let
-        getQuestion =
-            List.head <|
-                List.filter (\q -> q.id == model.currentQuestion) model.questions
-
-        showQuestion maybeQuestion =
-            case maybeQuestion of
-                Just question ->
-                    Questions.view question
-
-                Nothing ->
-                    text "There was an error"
+        renderQuestion =
+            if model.currentQuestion == startId then
+                startQuestion (getCurrentQuestion model)
+            else if model.currentQuestion == failureId then
+                failureQuestion (getCurrentQuestion model) (getLastQuestion model)
+            else if model.currentQuestion == finishId then
+                finishQuestion (getCurrentQuestion model)
+            else
+                anyQuestion (getCurrentQuestion model)
     in
-    div []
-        [ div [] [ showQuestion getQuestion ]
-        , button [ onClick ResetQuestions ] [ text "Reset" ]
-        , div [] [ text (toString model) ]
-        ]
+    renderQuestion
