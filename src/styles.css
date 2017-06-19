@@ -1,0 +1,88 @@
+body {
+  height: 100vh;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px;
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 22px;
+  line-height: 1.4;
+  color: #fff;
+
+  background: #0098DB url("bg-pattern.png");
+}
+
+/***********************************************
+  Typography
+***********************************************/
+
+h1 {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+/***********************************************
+  Question Wrapper
+***********************************************/
+
+.question-wrapper {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/***********************************************
+  Buttons
+***********************************************/
+
+.btn-primary {
+  background-color: #9c205f;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: bold;
+  margin: 0;
+  padding: 10px 20px;
+  min-width: 100px;
+  text-align: center;
+  text-decoration: none;
+  transition: all .2s;
+  white-space: nowrap;
+}
+
+.btn-primary:focus, .btn-primary:hover {
+  background-color: #B63A79;
+  outline: none;
+}
+
+.button-wrapper {
+  margin-top: 2em;
+  display: flex;
+}
+
+.button-wrapper._flex-space-between {
+  justify-content: space-between;
+  flex-direction: row-reverse;
+}
+
+/***********************************************
+  Progress Bar
+***********************************************/
+
+.progress-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+
+  background-color: rgba(255, 255, 255, 0.2);
+  height: 20px;
+}
+
+.progress-indication {
+  background-color: #fff;
+  height: 100%;
+  transition: width .6s ease-in;
+}

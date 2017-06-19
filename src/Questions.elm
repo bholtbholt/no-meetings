@@ -36,6 +36,7 @@ defaultQuestion : Question
 defaultQuestion =
     { id = startId
     , question = "There was an error loading the question."
+    , description = ""
     , proceedPath = startId
     , proceedLabel = "Restart"
     , responsePath = startId
@@ -48,6 +49,7 @@ initQuestions : List Question
 initQuestions =
     [ { id = startId
       , question = "Should this be a meeting?"
+      , description = "Run this wizard to find out if you need to have a meeting."
       , proceedPath = 1
       , proceedLabel = "Start"
       , responsePath = startId
@@ -56,6 +58,7 @@ initQuestions =
       }
     , { id = failureId
       , question = "Failure"
+      , description = ""
       , proceedPath = startId
       , proceedLabel = "Restart"
       , responsePath = failureId
@@ -64,14 +67,16 @@ initQuestions =
       }
     , { id = finishId
       , question = "Let’s Have A Meeting!"
+      , description = "Remember to: Share the agenda and goals of the meeting with your attendees. Add a Zoom link to the meeting in Google calendar. Book meeting rooms for all locations involved. Show up on time and ready. To step up your meeting game, consult this post about Running Better Meetings."
       , proceedPath = startId
       , proceedLabel = "Restart"
       , responsePath = finishId
       , responseLabel = ""
-      , responseText = "Remember to: Share the agenda and goals of the meeting with your attendees. Add a Zoom link to the meeting in Google calendar. Book meeting rooms for all locations involved. Show up on time and ready. To step up your meeting game, consult this post about Running Better Meetings."
+      , responseText = ""
       }
     , { id = 1
       , question = "Is this an important topic?"
+      , description = ""
       , proceedPath = 2
       , proceedLabel = "Yes"
       , responsePath = failureId
@@ -80,6 +85,7 @@ initQuestions =
       }
     , { id = 2
       , question = "Can it be solved by collaborating without meeting?"
+      , description = ""
       , proceedPath = 3
       , proceedLabel = "No"
       , responsePath = failureId
@@ -88,6 +94,7 @@ initQuestions =
       }
     , { id = 3
       , question = "Does it require everyone to participate?"
+      , description = ""
       , proceedPath = 4
       , proceedLabel = "Yes"
       , responsePath = failureId
@@ -96,6 +103,7 @@ initQuestions =
       }
     , { id = 4
       , question = "Does the group have authority to act?"
+      , description = ""
       , proceedPath = 5
       , proceedLabel = "Yes"
       , responsePath = 6
@@ -104,6 +112,7 @@ initQuestions =
       }
     , { id = 5
       , question = "Can the key participants and decision-makers attend?"
+      , description = ""
       , proceedPath = 7
       , proceedLabel = "Yes"
       , responsePath = 6
@@ -112,6 +121,7 @@ initQuestions =
       }
     , { id = 6
       , question = "Is there still value? Can the group still add significant value by meeting?"
+      , description = ""
       , proceedPath = 7
       , proceedLabel = "Yes"
       , responsePath = failureId
@@ -120,6 +130,7 @@ initQuestions =
       }
     , { id = 7
       , question = "Is there pre-work requested of key participants?"
+      , description = ""
       , proceedPath = 8
       , proceedLabel = "Yes"
       , responsePath = failureId
@@ -128,6 +139,7 @@ initQuestions =
       }
     , { id = 8
       , question = "Is there an agenda with clear goals?"
+      , description = ""
       , proceedPath = 9
       , proceedLabel = "Yes"
       , responsePath = failureId
@@ -136,6 +148,7 @@ initQuestions =
       }
     , { id = 9
       , question = "Is there enough time to get to the desired outcome?"
+      , description = ""
       , proceedPath = 10
       , proceedLabel = "Yes"
       , responsePath = failureId
@@ -144,6 +157,7 @@ initQuestions =
       }
     , { id = 10
       , question = "Is there a strong meeting facilitator?"
+      , description = ""
       , proceedPath = finishId
       , proceedLabel = "Yes"
       , responsePath = failureId
@@ -155,34 +169,76 @@ initQuestions =
 
 anyQuestion : Question -> Html Msg
 anyQuestion question =
-    div [ id (toString question.id) ]
+    section
+        [ id ("question-" ++ toString question.id)
+        , class "question-wrapper"
+        ]
         [ h1 [] [ text question.question ]
-        , button [ onClick (SetCurrentQuestion question.responsePath) ] [ text question.responseLabel ]
-        , button [ onClick (SetCurrentQuestion question.proceedPath) ] [ text question.proceedLabel ]
+        , p [] [ text question.description ]
+        , div [ class "button-wrapper _flex-space-between" ]
+            [ button
+                [ class "btn-primary"
+                , onClick (SetCurrentQuestion question.proceedPath)
+                ]
+                [ text question.proceedLabel ]
+            , button
+                [ class "btn-primary"
+                , onClick (SetCurrentQuestion question.responsePath)
+                ]
+                [ text question.responseLabel ]
+            ]
         ]
 
 
 startQuestion : Question -> Html Msg
 startQuestion question =
-    div [ id (toString question.id) ]
+    section
+        [ id ("question-" ++ toString question.id)
+        , class "question-wrapper"
+        ]
         [ h1 [] [ text question.question ]
-        , button [ onClick (SetCurrentQuestion question.proceedPath) ] [ text question.proceedLabel ]
+        , p [] [ text question.description ]
+        , div [ class "button-wrapper" ]
+            [ button
+                [ class "btn-primary"
+                , onClick (SetCurrentQuestion question.proceedPath)
+                ]
+                [ text question.proceedLabel ]
+            ]
         ]
 
 
 finishQuestion : Question -> Html Msg
 finishQuestion question =
-    div [ id (toString question.id) ]
+    section
+        [ id ("question-" ++ toString question.id)
+        , class "question-wrapper"
+        ]
         [ h1 [] [ text question.question ]
-        , p [] [ text question.responseText ]
-        , button [ onClick ResetQuestions ] [ text question.proceedLabel ]
+        , p [] [ text question.description ]
+        , div [ class "button-wrapper" ]
+            [ button
+                [ class "btn-primary"
+                , onClick ResetQuestions
+                ]
+                [ text question.proceedLabel ]
+            ]
         ]
 
 
 failureQuestion : Question -> Question -> Html Msg
 failureQuestion question lastQuestion =
-    div [ id (toString question.id) ]
+    section
+        [ id ("question-" ++ toString question.id)
+        , class "question-wrapper"
+        ]
         [ h1 [] [ text lastQuestion.question ]
         , p [] [ text lastQuestion.responseText ]
-        , button [ onClick ResetQuestions ] [ text question.proceedLabel ]
+        , div [ class "button-wrapper" ]
+            [ button
+                [ class "btn-primary"
+                , onClick ResetQuestions
+                ]
+                [ text question.proceedLabel ]
+            ]
         ]

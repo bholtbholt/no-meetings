@@ -6,8 +6,9 @@ type alias QuestionId =
 
 
 type alias Question =
-    { question : String
-    , id : QuestionId
+    { id : QuestionId
+    , question : String
+    , description : String
     , proceedPath : QuestionId
     , proceedLabel : String
     , responsePath : QuestionId
